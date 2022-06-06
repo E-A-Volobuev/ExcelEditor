@@ -190,11 +190,13 @@ namespace ExcelEditor
             string secondSheetName = "Склад";
             ISheet sheetSecond = templateWorkbook.GetSheet(secondSheetName) ?? templateWorkbook.CreateSheet(secondSheetName);
 
+            short doubleFormat = templateWorkbook.CreateDataFormat().GetFormat("#,##0.###");
+
             var listWithoutStorage = list.Where(x => x.NAME_KPR.Contains("Самарафармация")==false).ToList();
 
             if (listWithoutStorage.Count() > 0)
             {
-                WriteHelper(listWithoutStorage, sheetFirst, borderedCellStyle);
+                WriteHelper(listWithoutStorage, sheetFirst, borderedCellStyle, doubleFormat);
                 AllSumStorageHelper(templateWorkbook,sheetFirst,listWithoutStorage);
             }
 
@@ -202,7 +204,7 @@ namespace ExcelEditor
 
             if (storageList.Count() > 0)
             {
-                WriteHelper(storageList, sheetSecond, borderedCellStyle);
+                WriteHelper(storageList, sheetSecond, borderedCellStyle, doubleFormat);
                 AllSumStorageHelper(templateWorkbook,sheetSecond, storageList);
             }
             using (FileStream fs = new FileStream(pathSource, FileMode.Create, FileAccess.Write))
@@ -258,7 +260,7 @@ namespace ExcelEditor
             }         
         }
 
-        private void WriteHelper(List<Info> list, ISheet sheet, XSSFCellStyle borderedCellStyle)
+        private void WriteHelper(List<Info> list, ISheet sheet, XSSFCellStyle borderedCellStyle, short doubleFormat)
         {
             var orderlyList = list.OrderBy(x => x.NAME_MNN).ToList();
 
@@ -292,9 +294,8 @@ namespace ExcelEditor
                 ICell cellBySRGODN = dataRow.GetCell(6) ?? dataRow.CreateCell(6);
                 if (!string.IsNullOrEmpty(orderlyList[i-4].SRGODN))
                 {
-                    DateTime enteredDate = DateTime.Parse(orderlyList[i-4].SRGODN);
                     cellBySRGODN.CellStyle = borderedCellStyle;
-                    cellBySRGODN.SetCellValue(enteredDate);
+                    cellBySRGODN.SetCellValue(orderlyList[i - 4].SRGODN);
                 }
 
                 ICell cellByKOLVO = dataRow.GetCell(7) ?? dataRow.CreateCell(7);
