@@ -1,21 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Forms;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace ExcelEditor
 {
@@ -63,11 +51,11 @@ namespace ExcelEditor
                 });
                 task.Start();
 
-                string fileTemplate = System.IO.Path.GetTempFileName() + ".xlsx";
-                File.WriteAllBytes(fileTemplate, Properties.Resources.Склад);
                 Work work = new Work();
+                string fileTemplate = GetTemplateFile();
                 string currentCatalog = textBox.Text;
                 string pathResult = textBox2.Text;
+
                 await work.StartProcess(fileTemplate, currentCatalog, pathResult);
 
                 pbStatus.Value = 100;
@@ -76,8 +64,15 @@ namespace ExcelEditor
             catch(Exception ex)
             {
                 System.Windows.MessageBox.Show(ex.Message);
-            }
-           
+            }     
+        }
+
+        private string GetTemplateFile()
+        {
+            string fileTemplate = System.IO.Path.GetTempFileName() + ".xlsx";
+            File.WriteAllBytes(fileTemplate, Properties.Resources.Склад);
+
+            return fileTemplate;
         }
     }
 }
